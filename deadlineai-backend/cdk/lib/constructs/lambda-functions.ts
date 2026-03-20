@@ -23,25 +23,20 @@ export class LambdaFunctions extends Construct {
 
     const srcPath = path.join(__dirname, '..', '..', '..', 'src');
 
+    // Environment variables — Twilio creds are set directly (no SSM)
+    // Set real values via CDK context, CLI overrides, or edit after deploy
     const commonEnv: Record<string, string> = {
       TABLE_NAME: props.table.tableName,
       BUCKET_NAME: props.bucket.bucketName,
       USER_POOL_ID: props.userPool.userPoolId,
       USER_POOL_CLIENT_ID: props.userPoolClient.userPoolClientId,
-      ANTHROPIC_PARAM: '/deadlineai/anthropic/api-key',
-      TWILIO_SID_PARAM: '/deadlineai/twilio/account-sid',
-      TWILIO_TOKEN_PARAM: '/deadlineai/twilio/auth-token',
-      TWILIO_FROM_PARAM: '/deadlineai/twilio/whatsapp-from',
+      AWS_REGION_OVERRIDE: 'ap-south-1',
+      // Twilio — replace with real values before deploy or update in Lambda console
+      TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID || 'REPLACE_ME',
+      TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN || 'REPLACE_ME',
+      TWILIO_WHATSAPP_FROM: process.env.TWILIO_WHATSAPP_FROM || 'whatsapp:+14155238886',
       NODE_ENV: 'production',
     };
-
-    const ssmReadPolicy = new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: ['ssm:GetParameter'],
-      resources: [
-        `arn:aws:ssm:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:parameter/deadlineai/*`,
-      ],
-    });
 
     const bedrockPolicy = new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
@@ -116,7 +111,6 @@ export class LambdaFunctions extends Construct {
         timeout: 10,
         extras: (fn) => {
           props.table.grantReadWriteData(fn);
-          // execute-api:ManageConnections granted after websocket api is created
         },
       },
       procrastinationWatch: {
@@ -141,8 +135,6 @@ export class LambdaFunctions extends Construct {
         environment: commonEnv,
         logRetention: logs.RetentionDays.ONE_WEEK,
       });
-
-      fn.addToRolePolicy(ssmReadPolicy);
 
       if (def.extras) {
         def.extras(fn);

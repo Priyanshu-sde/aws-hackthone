@@ -1,37 +1,27 @@
-import { SSMClient, GetParameterCommand } from '@aws-sdk/client-ssm';
 import twilio from 'twilio';
 
-const ssmClient = new SSMClient({});
-
-// Cache credentials at module scope for warm Lambda starts
+// Read from Lambda environment variables directly
 let twilioClient = null;
 let whatsappFrom = null;
 
-async function getParam(name) {
-  const result = await ssmClient.send(
-    new GetParameterCommand({ Name: name, WithDecryption: true })
-  );
-  return result.Parameter.Value;
-}
-
-async function ensureClient() {
+function ensureClient() {
   if (twilioClient) return;
 
-  const [sid, token, from] = await Promise.all([
-    getParam(process.env.TWILIO_SID_PARAM),
-    getParam(process.env.TWILIO_TOKEN_PARAM),
-    getParam(process.env.TWILIO_FROM_PARAM),
-  ]);
+  const sid = process.env.TWILIO_ACCOUNT_SID;
+  const token = process.env.TWILIO_AUTH_TOKEN;
+  whatsappFrom = process.env.TWILIO_WHATSAPP_FROM || 'whatsapp:+14155238886';
+
+  if (!sid || !token) {
+    throw new Error('Missing TWILIO_ACCOUNT_SID or TWILIO_AUTH_TOKEN environment variables');
+  }
 
   twilioClient = twilio(sid, token);
-  whatsappFrom = from;
 }
 
 export async function sendWhatsApp(to, message) {
-  await ensureClient();
+  ensureClient();
 
   const toNumber = to.startsWith('whatsapp:') ? to : `whatsapp:${to}`;
-
   console.log(`Sending WhatsApp to ${toNumber}`);
 
   const result = await twilioClient.messages.create({
@@ -45,11 +35,11 @@ export async function sendWhatsApp(to, message) {
 }
 
 export async function sendSMS(to, message) {
-  await ensureClient();
+  ensureClient();
 
   console.log(`Sending SMS to ${to}`);
 
-  // HACKATHON NOTE: SMS sender number should be a separate SSM param in production
+  // HACKATHON NOTE: SMS sender number should be separate in production
   const result = await twilioClient.messages.create({
     body: message,
     from: whatsappFrom.replace('whatsapp:', ''),
