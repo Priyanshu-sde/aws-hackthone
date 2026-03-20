@@ -1,0 +1,850 @@
+{
+  "/DeadlineAiStack/Custom::S3AutoDeleteObjectsCustomResourceProvider": [
+    {
+      "type": "aws:cdk:is-custom-resource-handler-customResourceProvider",
+      "data": true
+    }
+  ],
+  "/DeadlineAiStack/ApiUrl": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiUrl"
+    }
+  ],
+  "/DeadlineAiStack/WebSocketUrl": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "WebSocketUrl"
+    }
+  ],
+  "/DeadlineAiStack/UserPoolId": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "UserPoolId"
+    }
+  ],
+  "/DeadlineAiStack/UserPoolClientId": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "UserPoolClientId"
+    }
+  ],
+  "/DeadlineAiStack/TableName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "TableName"
+    }
+  ],
+  "/DeadlineAiStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/DeadlineAiStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/DeadlineAiStack/PdfBucket/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "PdfBucketFA9E115A"
+    },
+    {
+      "type": "aws:cdk:analytics:mixin",
+      "data": {
+        "mixin": "aws-cdk-lib.aws_s3.mixins.BucketAutoDeleteObjects"
+      }
+    }
+  ],
+  "/DeadlineAiStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+    }
+  ],
+  "/DeadlineAiStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F"
+    }
+  ],
+  "/DeadlineAiStack/UserPool/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "UserPool6BA7E5F2"
+    }
+  ],
+  "/DeadlineAiStack/UserPoolClient/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "UserPoolClient2F5918F7"
+    }
+  ],
+  "/DeadlineAiStack/DynamoTables/MainTable": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "DynamoTablesMainTableDB68F392"
+      }
+    }
+  ],
+  "/DeadlineAiStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/WebSocketApi": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayWebSocketApiD6348217"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/ConnectIntegration": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayConnectIntegrationF1BF9A41"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/ConnectRoute": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayConnectRoute5E5A23EC"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/DisconnectIntegration": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayDisconnectIntegration2569C249"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/DisconnectRoute": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayDisconnectRouteCEA15451"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/DefaultIntegration": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayDefaultIntegration7BD5045B"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/DefaultRoute": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayDefaultRoute92A7574F"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/WebSocketStage": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayWebSocketStageA373DF4D"
+    }
+  ],
+  "/DeadlineAiStack/NotifTopic/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "NotifTopic93A3095C"
+    }
+  ],
+  "/DeadlineAiStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/DeadlineAiStack/PdfBucket/Policy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "PdfBucketPolicy89599CFB"
+    },
+    {
+      "type": "aws:cdk:analytics:mixin",
+      "data": {
+        "mixin": "aws-cdk-lib.aws_s3.mixins.BucketPolicyStatements"
+      }
+    }
+  ],
+  "/DeadlineAiStack/PdfBucket/AutoDeleteObjectsCustomResource/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "PdfBucketAutoDeleteObjectsCustomResource0E5D0F3D"
+    }
+  ],
+  "/DeadlineAiStack/DynamoTables/MainTable/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DynamoTablesMainTableDB68F392"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/pdfIngestFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionspdfIngestFn4A54BB23"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/confirmDeadlinesFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsconfirmDeadlinesFn5A1D6206"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/getDeadlinesFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsgetDeadlinesFn0D69D4CB"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/clashAnalysisFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsclashAnalysisFn4065E82E"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/paceSchedulerFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionspaceSchedulerFnE6AA3D07"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/reminderDispatchFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsreminderDispatchFn7674B1E0"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/autopsyInsightFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsautopsyInsightFn7BF9042B"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/squadOpsFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionssquadOpsFn23B7E6C8"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/squadSyncFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionssquadSyncFn581395E6"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/squadSyncFn/WebSocketInvoke": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionssquadSyncFnWebSocketInvoke019A3A39"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/procrastinationWatchFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsprocrastinationWatchFnC5C11BCC"
+    }
+  ],
+  "/DeadlineAiStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApi7538854B"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Account": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApiAccount6F7770AB"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Endpoint": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApiEndpoint8A8A12DA"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/CognitoAuth/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayCognitoAuth569868E7"
+    }
+  ],
+  "/DeadlineAiStack/EventBridgeRules/ReminderSchedule/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EventBridgeRulesReminderScheduleA32BB1D6"
+    }
+  ],
+  "/DeadlineAiStack/EventBridgeRules/ReminderSchedule/AllowEventRuleDeadlineAiStackLambdaFunctionsreminderDispatchFnF09456F4": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EventBridgeRulesReminderScheduleAllowEventRuleDeadlineAiStackLambdaFunctionsreminderDispatchFnF09456F47B2E25D9"
+    }
+  ],
+  "/DeadlineAiStack/EventBridgeRules/AutopsyDaily/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EventBridgeRulesAutopsyDaily6EBAA07B"
+    }
+  ],
+  "/DeadlineAiStack/EventBridgeRules/AutopsyDaily/AllowEventRuleDeadlineAiStackLambdaFunctionsautopsyInsightFnFDC73A98": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EventBridgeRulesAutopsyDailyAllowEventRuleDeadlineAiStackLambdaFunctionsautopsyInsightFnFDC73A986F1728B9"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/pdfIngestFn/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionspdfIngestFnServiceRoleA6F4D006"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/pdfIngestFn/LogRetention/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionspdfIngestFnLogRetention6EA5E0F5"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/confirmDeadlinesFn/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsconfirmDeadlinesFnServiceRole135142AD"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/confirmDeadlinesFn/LogRetention/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsconfirmDeadlinesFnLogRetentionD161DFDD"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/getDeadlinesFn/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsgetDeadlinesFnServiceRole586AD67F"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/getDeadlinesFn/LogRetention/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsgetDeadlinesFnLogRetention0FC03DFC"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/clashAnalysisFn/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsclashAnalysisFnServiceRole627A3656"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/clashAnalysisFn/LogRetention/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsclashAnalysisFnLogRetention7AC24BB3"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/paceSchedulerFn/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionspaceSchedulerFnServiceRoleE93C1249"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/paceSchedulerFn/LogRetention/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionspaceSchedulerFnLogRetentionEE4ED121"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/reminderDispatchFn/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsreminderDispatchFnServiceRole8ED958C6"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/reminderDispatchFn/LogRetention/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsreminderDispatchFnLogRetention31F59230"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/autopsyInsightFn/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsautopsyInsightFnServiceRoleE22B92DA"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/autopsyInsightFn/LogRetention/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsautopsyInsightFnLogRetentionF7ABF294"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/squadOpsFn/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionssquadOpsFnServiceRoleD07F20B3"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/squadOpsFn/LogRetention/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionssquadOpsFnLogRetentionC9FECBEC"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/squadSyncFn/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionssquadSyncFnServiceRole2C0A9C30"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/squadSyncFn/LogRetention/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionssquadSyncFnLogRetention8CE307EB"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/procrastinationWatchFn/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsprocrastinationWatchFnServiceRole728162A7"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/procrastinationWatchFn/LogRetention/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsprocrastinationWatchFnLogRetentionEB42190A"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/procrastinationWatchFn/DynamoDBEventSource:DeadlineAiStackDynamoTablesMainTable807BADBB/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsprocrastinationWatchFnDynamoDBEventSourceDeadlineAiStackDynamoTablesMainTable807BADBB42574BD6"
+    }
+  ],
+  "/DeadlineAiStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/CloudWatchRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApiCloudWatchRoleC428F9CB"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Deployment/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApiDeploymentF39605600bc51abbdde289419e6eff3c2739ce8a"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/DeploymentStage.prod/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApiDeploymentStageprod083524AB"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/pdfIngestFn/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionspdfIngestFnServiceRoleDefaultPolicy3BA177BA"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/confirmDeadlinesFn/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsconfirmDeadlinesFnServiceRoleDefaultPolicy6BAA4A57"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/getDeadlinesFn/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsgetDeadlinesFnServiceRoleDefaultPolicyFB8F2DCC"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/clashAnalysisFn/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsclashAnalysisFnServiceRoleDefaultPolicy99AB90A2"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/paceSchedulerFn/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionspaceSchedulerFnServiceRoleDefaultPolicy35F21A64"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/reminderDispatchFn/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsreminderDispatchFnServiceRoleDefaultPolicy8178F3A1"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/autopsyInsightFn/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsautopsyInsightFnServiceRoleDefaultPolicy96E2A608"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/squadOpsFn/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionssquadOpsFnServiceRoleDefaultPolicy5CF31186"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/squadSyncFn/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionssquadSyncFnServiceRoleDefaultPolicyFD3C99FF"
+    }
+  ],
+  "/DeadlineAiStack/LambdaFunctions/procrastinationWatchFn/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaFunctionsprocrastinationWatchFnServiceRoleDefaultPolicyBDE67CE2"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApiOPTIONSDE91A6D5"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/syllabi/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisyllabi1C95B8FC"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlines5A28B245"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/autopsies/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApiautopsies1C27B289"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/squads/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisquads5B1ACBF7"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/syllabi/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisyllabiOPTIONS76A48703"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/syllabi/upload/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisyllabiupload46A44023"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlinesOPTIONSC3CC5472"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/GET/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.GET..deadlines": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlinesGETApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EGETdeadlinesFA68BCF0"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/GET/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.GET..deadlines": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlinesGETApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EGETdeadlinesF4A67F77"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/GET/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlinesGET04D6D92F"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/confirm/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlinesconfirm019EFA75"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/clashes/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlinesclashesD3853D20"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/{deadlineId}/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlinesdeadlineId224B102A"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/autopsies/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApiautopsiesOPTIONS8F3AAC0B"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/autopsies/POST/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..autopsies": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApiautopsiesPOSTApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EPOSTautopsies03FDBA39"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/autopsies/POST/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..autopsies": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApiautopsiesPOSTApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EPOSTautopsiesB350F7C6"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/autopsies/POST/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApiautopsiesPOST5D5DD16F"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/squads/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisquadsOPTIONS000E8E93"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/squads/POST/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..squads": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisquadsPOSTApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EPOSTsquadsBA3E3695"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/squads/POST/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..squads": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisquadsPOSTApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EPOSTsquads201816CC"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/squads/POST/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisquadsPOST8B93674E"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/squads/GET/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.GET..squads": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisquadsGETApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EGETsquads06084619"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/squads/GET/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.GET..squads": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisquadsGETApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EGETsquads21B03C15"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/squads/GET/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisquadsGETB0CD394F"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/squads/{squadId}/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisquadssquadIdF6588732"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/squads/join/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisquadsjoin5C0DAB8E"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/syllabi/upload/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisyllabiuploadOPTIONSDCC2E60B"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/syllabi/upload/POST/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..syllabi.upload": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisyllabiuploadPOSTApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EPOSTsyllabiupload462CFF90"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/syllabi/upload/POST/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..syllabi.upload": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisyllabiuploadPOSTApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EPOSTsyllabiupload58BB75A8"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/syllabi/upload/POST/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisyllabiuploadPOSTFA11730A"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/confirm/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlinesconfirmOPTIONSCD602621"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/confirm/POST/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..deadlines.confirm": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlinesconfirmPOSTApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EPOSTdeadlinesconfirmD401B308"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/confirm/POST/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..deadlines.confirm": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlinesconfirmPOSTApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EPOSTdeadlinesconfirm4713AFCB"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/confirm/POST/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlinesconfirmPOST464C2301"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/clashes/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlinesclashesOPTIONS4A7BD41B"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/clashes/GET/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.GET..deadlines.clashes": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlinesclashesGETApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EGETdeadlinesclashesE7D8082A"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/clashes/GET/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.GET..deadlines.clashes": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlinesclashesGETApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EGETdeadlinesclashesADA820A4"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/clashes/GET/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlinesclashesGET9862F941"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/{deadlineId}/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlinesdeadlineIdOPTIONSE6862946"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/{deadlineId}/pace/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlinesdeadlineIdpaceA0C6C5B1"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/squads/{squadId}/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisquadssquadIdOPTIONSE3785597"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/squads/{squadId}/GET/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.GET..squads.{squadId}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisquadssquadIdGETApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EGETsquadssquadIdCBABCB4C"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/squads/{squadId}/GET/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.GET..squads.{squadId}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisquadssquadIdGETApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EGETsquadssquadIdEA29A6B0"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/squads/{squadId}/GET/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisquadssquadIdGETC51FD835"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/squads/{squadId}/DELETE/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.DELETE..squads.{squadId}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisquadssquadIdDELETEApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EDELETEsquadssquadId63827FE4"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/squads/{squadId}/DELETE/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.DELETE..squads.{squadId}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisquadssquadIdDELETEApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EDELETEsquadssquadId5754F005"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/squads/{squadId}/DELETE/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisquadssquadIdDELETE2B546F69"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/squads/join/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisquadsjoinOPTIONSA4841EF0"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/squads/join/POST/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..squads.join": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisquadsjoinPOSTApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EPOSTsquadsjoin69C6D437"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/squads/join/POST/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..squads.join": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisquadsjoinPOSTApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EPOSTsquadsjoinD7FC49A2"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/squads/join/POST/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApisquadsjoinPOST5B98B9BC"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/{deadlineId}/pace/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlinesdeadlineIdpaceOPTIONS444560D8"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/{deadlineId}/pace/POST/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..deadlines.{deadlineId}.pace": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlinesdeadlineIdpacePOSTApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EPOSTdeadlinesdeadlineIdpace472190DE"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/{deadlineId}/pace/POST/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..deadlines.{deadlineId}.pace": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlinesdeadlineIdpacePOSTApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EPOSTdeadlinesdeadlineIdpaceBAC79A6A"
+    }
+  ],
+  "/DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/{deadlineId}/pace/POST/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiGatewayRestApideadlinesdeadlineIdpacePOSTD10D607C"
+    }
+  ]
+}

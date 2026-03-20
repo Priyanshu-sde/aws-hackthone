@@ -1,0 +1,5017 @@
+{
+ "Resources": {
+  "PdfBucketFA9E115A": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketName": "deadlineai-pdfs-216989120925-ap-south-1",
+    "LifecycleConfiguration": {
+     "Rules": [
+      {
+       "ExpirationInDays": 1,
+       "Status": "Enabled"
+      }
+     ]
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "Tags": [
+     {
+      "Key": "aws-cdk:auto-delete-objects",
+      "Value": "true"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/PdfBucket/Resource"
+   }
+  },
+  "PdfBucketPolicy89599CFB": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "PdfBucketFA9E115A"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:PutBucketPolicy",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*"
+       ],
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::GetAtt": [
+          "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+          "Arn"
+         ]
+        }
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "PdfBucketFA9E115A",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "PdfBucketFA9E115A",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/PdfBucket/Policy/Resource"
+   }
+  },
+  "PdfBucketAutoDeleteObjectsCustomResource0E5D0F3D": {
+   "Type": "Custom::S3AutoDeleteObjects",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+      "Arn"
+     ]
+    },
+    "BucketName": {
+     "Ref": "PdfBucketFA9E115A"
+    }
+   },
+   "DependsOn": [
+    "PdfBucketPolicy89599CFB"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/PdfBucket/AutoDeleteObjectsCustomResource/Default"
+   }
+  },
+  "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ]
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Sub": "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role"
+   }
+  },
+  "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-216989120925-ap-south-1",
+     "S3Key": "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6.zip"
+    },
+    "Timeout": 900,
+    "MemorySize": 128,
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x",
+    "Description": {
+     "Fn::Join": [
+      "",
+      [
+       "Lambda function for auto-deleting objects in ",
+       {
+        "Ref": "PdfBucketFA9E115A"
+       },
+       " S3 bucket."
+      ]
+     ]
+    }
+   },
+   "DependsOn": [
+    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler",
+    "aws:asset:path": "asset.faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6",
+    "aws:asset:property": "Code"
+   }
+  },
+  "UserPool6BA7E5F2": {
+   "Type": "AWS::Cognito::UserPool",
+   "Properties": {
+    "AccountRecoverySetting": {
+     "RecoveryMechanisms": [
+      {
+       "Name": "verified_email",
+       "Priority": 1
+      }
+     ]
+    },
+    "AdminCreateUserConfig": {
+     "AllowAdminCreateUserOnly": false
+    },
+    "AutoVerifiedAttributes": [
+     "email"
+    ],
+    "EmailVerificationMessage": "The verification code to your new account is {####}",
+    "EmailVerificationSubject": "Verify your new account",
+    "Policies": {
+     "PasswordPolicy": {
+      "MinimumLength": 8,
+      "RequireLowercase": true,
+      "RequireNumbers": true,
+      "RequireSymbols": false,
+      "RequireUppercase": false
+     }
+    },
+    "Schema": [
+     {
+      "Mutable": true,
+      "Name": "email",
+      "Required": true
+     },
+     {
+      "Mutable": true,
+      "Name": "name",
+      "Required": false
+     },
+     {
+      "Mutable": true,
+      "Name": "phone_number",
+      "Required": false
+     }
+    ],
+    "SmsVerificationMessage": "The verification code to your new account is {####}",
+    "UserPoolName": "deadlineai-users",
+    "UsernameAttributes": [
+     "email"
+    ],
+    "VerificationMessageTemplate": {
+     "DefaultEmailOption": "CONFIRM_WITH_CODE",
+     "EmailMessage": "The verification code to your new account is {####}",
+     "EmailSubject": "Verify your new account",
+     "SmsMessage": "The verification code to your new account is {####}"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/UserPool/Resource"
+   }
+  },
+  "UserPoolClient2F5918F7": {
+   "Type": "AWS::Cognito::UserPoolClient",
+   "Properties": {
+    "AllowedOAuthFlows": [
+     "implicit",
+     "code"
+    ],
+    "AllowedOAuthFlowsUserPoolClient": true,
+    "AllowedOAuthScopes": [
+     "profile",
+     "phone",
+     "email",
+     "openid",
+     "aws.cognito.signin.user.admin"
+    ],
+    "CallbackURLs": [
+     "https://example.com"
+    ],
+    "ClientName": "deadlineai-app",
+    "ExplicitAuthFlows": [
+     "ALLOW_USER_PASSWORD_AUTH",
+     "ALLOW_USER_SRP_AUTH",
+     "ALLOW_REFRESH_TOKEN_AUTH"
+    ],
+    "GenerateSecret": false,
+    "SupportedIdentityProviders": [
+     "COGNITO"
+    ],
+    "UserPoolId": {
+     "Ref": "UserPool6BA7E5F2"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/UserPoolClient/Resource"
+   }
+  },
+  "DynamoTablesMainTableDB68F392": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "SK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "createdAt",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "squadId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "dueDate",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "reminderStatus",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "nextReminderAt",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "GSI1",
+      "KeySchema": [
+       {
+        "AttributeName": "SK",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "createdAt",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "GSI2",
+      "KeySchema": [
+       {
+        "AttributeName": "squadId",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "dueDate",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "GSI3",
+      "KeySchema": [
+       {
+        "AttributeName": "reminderStatus",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "nextReminderAt",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "PK",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "SK",
+      "KeyType": "RANGE"
+     }
+    ],
+    "StreamSpecification": {
+     "StreamViewType": "NEW_AND_OLD_IMAGES"
+    },
+    "TableName": "deadlineai"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/DynamoTables/MainTable/Resource"
+   }
+  },
+  "LambdaFunctionspdfIngestFnServiceRoleA6F4D006": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/pdfIngestFn/ServiceRole/Resource"
+   }
+  },
+  "LambdaFunctionspdfIngestFnServiceRoleDefaultPolicy3BA177BA": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "PdfBucketFA9E115A",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "PdfBucketFA9E115A",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DynamoTablesMainTableDB68F392",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DynamoTablesMainTableDB68F392",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DynamoTablesMainTableDB68F392",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DynamoTablesMainTableDB68F392",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": "bedrock:InvokeModel",
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LambdaFunctionspdfIngestFnServiceRoleDefaultPolicy3BA177BA",
+    "Roles": [
+     {
+      "Ref": "LambdaFunctionspdfIngestFnServiceRoleA6F4D006"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/pdfIngestFn/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "LambdaFunctionspdfIngestFn4A54BB23": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-216989120925-ap-south-1",
+     "S3Key": "9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLE_NAME": {
+       "Ref": "DynamoTablesMainTableDB68F392"
+      },
+      "BUCKET_NAME": {
+       "Ref": "PdfBucketFA9E115A"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      },
+      "USER_POOL_CLIENT_ID": {
+       "Ref": "UserPoolClient2F5918F7"
+      },
+      "AWS_REGION_OVERRIDE": "ap-south-1",
+      "NODE_ENV": "production"
+     }
+    },
+    "FunctionName": "deadlineai-pdfIngest",
+    "Handler": "handlers/pdfIngest.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaFunctionspdfIngestFnServiceRoleA6F4D006",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 90
+   },
+   "DependsOn": [
+    "LambdaFunctionspdfIngestFnServiceRoleDefaultPolicy3BA177BA",
+    "LambdaFunctionspdfIngestFnServiceRoleA6F4D006"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/pdfIngestFn/Resource",
+    "aws:asset:path": "asset.9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "LambdaFunctionspdfIngestFnLogRetention6EA5E0F5": {
+   "Type": "Custom::LogRetention",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+      "Arn"
+     ]
+    },
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "LambdaFunctionspdfIngestFn4A54BB23"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 7
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/pdfIngestFn/LogRetention/Resource"
+   }
+  },
+  "LambdaFunctionsconfirmDeadlinesFnServiceRole135142AD": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/confirmDeadlinesFn/ServiceRole/Resource"
+   }
+  },
+  "LambdaFunctionsconfirmDeadlinesFnServiceRoleDefaultPolicy6BAA4A57": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DynamoTablesMainTableDB68F392",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DynamoTablesMainTableDB68F392",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DynamoTablesMainTableDB68F392",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DynamoTablesMainTableDB68F392",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LambdaFunctionsconfirmDeadlinesFnServiceRoleDefaultPolicy6BAA4A57",
+    "Roles": [
+     {
+      "Ref": "LambdaFunctionsconfirmDeadlinesFnServiceRole135142AD"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/confirmDeadlinesFn/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "LambdaFunctionsconfirmDeadlinesFn5A1D6206": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-216989120925-ap-south-1",
+     "S3Key": "9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLE_NAME": {
+       "Ref": "DynamoTablesMainTableDB68F392"
+      },
+      "BUCKET_NAME": {
+       "Ref": "PdfBucketFA9E115A"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      },
+      "USER_POOL_CLIENT_ID": {
+       "Ref": "UserPoolClient2F5918F7"
+      },
+      "AWS_REGION_OVERRIDE": "ap-south-1",
+      "NODE_ENV": "production"
+     }
+    },
+    "FunctionName": "deadlineai-confirmDeadlines",
+    "Handler": "handlers/confirmDeadlines.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaFunctionsconfirmDeadlinesFnServiceRole135142AD",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 15
+   },
+   "DependsOn": [
+    "LambdaFunctionsconfirmDeadlinesFnServiceRoleDefaultPolicy6BAA4A57",
+    "LambdaFunctionsconfirmDeadlinesFnServiceRole135142AD"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/confirmDeadlinesFn/Resource",
+    "aws:asset:path": "asset.9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "LambdaFunctionsconfirmDeadlinesFnLogRetentionD161DFDD": {
+   "Type": "Custom::LogRetention",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+      "Arn"
+     ]
+    },
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "LambdaFunctionsconfirmDeadlinesFn5A1D6206"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 7
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/confirmDeadlinesFn/LogRetention/Resource"
+   }
+  },
+  "LambdaFunctionsgetDeadlinesFnServiceRole586AD67F": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/getDeadlinesFn/ServiceRole/Resource"
+   }
+  },
+  "LambdaFunctionsgetDeadlinesFnServiceRoleDefaultPolicyFB8F2DCC": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DynamoTablesMainTableDB68F392",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DynamoTablesMainTableDB68F392",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DynamoTablesMainTableDB68F392",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DynamoTablesMainTableDB68F392",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LambdaFunctionsgetDeadlinesFnServiceRoleDefaultPolicyFB8F2DCC",
+    "Roles": [
+     {
+      "Ref": "LambdaFunctionsgetDeadlinesFnServiceRole586AD67F"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/getDeadlinesFn/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "LambdaFunctionsgetDeadlinesFn0D69D4CB": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-216989120925-ap-south-1",
+     "S3Key": "9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLE_NAME": {
+       "Ref": "DynamoTablesMainTableDB68F392"
+      },
+      "BUCKET_NAME": {
+       "Ref": "PdfBucketFA9E115A"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      },
+      "USER_POOL_CLIENT_ID": {
+       "Ref": "UserPoolClient2F5918F7"
+      },
+      "AWS_REGION_OVERRIDE": "ap-south-1",
+      "NODE_ENV": "production"
+     }
+    },
+    "FunctionName": "deadlineai-getDeadlines",
+    "Handler": "handlers/getDeadlines.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaFunctionsgetDeadlinesFnServiceRole586AD67F",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "LambdaFunctionsgetDeadlinesFnServiceRoleDefaultPolicyFB8F2DCC",
+    "LambdaFunctionsgetDeadlinesFnServiceRole586AD67F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/getDeadlinesFn/Resource",
+    "aws:asset:path": "asset.9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "LambdaFunctionsgetDeadlinesFnLogRetention0FC03DFC": {
+   "Type": "Custom::LogRetention",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+      "Arn"
+     ]
+    },
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "LambdaFunctionsgetDeadlinesFn0D69D4CB"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 7
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/getDeadlinesFn/LogRetention/Resource"
+   }
+  },
+  "LambdaFunctionsclashAnalysisFnServiceRole627A3656": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/clashAnalysisFn/ServiceRole/Resource"
+   }
+  },
+  "LambdaFunctionsclashAnalysisFnServiceRoleDefaultPolicy99AB90A2": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DynamoTablesMainTableDB68F392",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DynamoTablesMainTableDB68F392",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DynamoTablesMainTableDB68F392",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DynamoTablesMainTableDB68F392",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": "bedrock:InvokeModel",
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LambdaFunctionsclashAnalysisFnServiceRoleDefaultPolicy99AB90A2",
+    "Roles": [
+     {
+      "Ref": "LambdaFunctionsclashAnalysisFnServiceRole627A3656"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/clashAnalysisFn/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "LambdaFunctionsclashAnalysisFn4065E82E": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-216989120925-ap-south-1",
+     "S3Key": "9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLE_NAME": {
+       "Ref": "DynamoTablesMainTableDB68F392"
+      },
+      "BUCKET_NAME": {
+       "Ref": "PdfBucketFA9E115A"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      },
+      "USER_POOL_CLIENT_ID": {
+       "Ref": "UserPoolClient2F5918F7"
+      },
+      "AWS_REGION_OVERRIDE": "ap-south-1",
+      "NODE_ENV": "production"
+     }
+    },
+    "FunctionName": "deadlineai-clashAnalysis",
+    "Handler": "handlers/clashAnalysis.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaFunctionsclashAnalysisFnServiceRole627A3656",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "LambdaFunctionsclashAnalysisFnServiceRoleDefaultPolicy99AB90A2",
+    "LambdaFunctionsclashAnalysisFnServiceRole627A3656"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/clashAnalysisFn/Resource",
+    "aws:asset:path": "asset.9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "LambdaFunctionsclashAnalysisFnLogRetention7AC24BB3": {
+   "Type": "Custom::LogRetention",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+      "Arn"
+     ]
+    },
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "LambdaFunctionsclashAnalysisFn4065E82E"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 7
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/clashAnalysisFn/LogRetention/Resource"
+   }
+  },
+  "LambdaFunctionspaceSchedulerFnServiceRoleE93C1249": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/paceSchedulerFn/ServiceRole/Resource"
+   }
+  },
+  "LambdaFunctionspaceSchedulerFnServiceRoleDefaultPolicy35F21A64": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DynamoTablesMainTableDB68F392",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DynamoTablesMainTableDB68F392",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DynamoTablesMainTableDB68F392",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DynamoTablesMainTableDB68F392",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": "bedrock:InvokeModel",
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LambdaFunctionspaceSchedulerFnServiceRoleDefaultPolicy35F21A64",
+    "Roles": [
+     {
+      "Ref": "LambdaFunctionspaceSchedulerFnServiceRoleE93C1249"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/paceSchedulerFn/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "LambdaFunctionspaceSchedulerFnE6AA3D07": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-216989120925-ap-south-1",
+     "S3Key": "9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLE_NAME": {
+       "Ref": "DynamoTablesMainTableDB68F392"
+      },
+      "BUCKET_NAME": {
+       "Ref": "PdfBucketFA9E115A"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      },
+      "USER_POOL_CLIENT_ID": {
+       "Ref": "UserPoolClient2F5918F7"
+      },
+      "AWS_REGION_OVERRIDE": "ap-south-1",
+      "NODE_ENV": "production"
+     }
+    },
+    "FunctionName": "deadlineai-paceScheduler",
+    "Handler": "handlers/paceScheduler.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaFunctionspaceSchedulerFnServiceRoleE93C1249",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "LambdaFunctionspaceSchedulerFnServiceRoleDefaultPolicy35F21A64",
+    "LambdaFunctionspaceSchedulerFnServiceRoleE93C1249"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/paceSchedulerFn/Resource",
+    "aws:asset:path": "asset.9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "LambdaFunctionspaceSchedulerFnLogRetentionEE4ED121": {
+   "Type": "Custom::LogRetention",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+      "Arn"
+     ]
+    },
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "LambdaFunctionspaceSchedulerFnE6AA3D07"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 7
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/paceSchedulerFn/LogRetention/Resource"
+   }
+  },
+  "LambdaFunctionsreminderDispatchFnServiceRole8ED958C6": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/reminderDispatchFn/ServiceRole/Resource"
+   }
+  },
+  "LambdaFunctionsreminderDispatchFnServiceRoleDefaultPolicy8178F3A1": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DynamoTablesMainTableDB68F392",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DynamoTablesMainTableDB68F392",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DynamoTablesMainTableDB68F392",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DynamoTablesMainTableDB68F392",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": "sns:Publish",
+       "Effect": "Allow",
+       "Resource": {
+        "Ref": "NotifTopic93A3095C"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LambdaFunctionsreminderDispatchFnServiceRoleDefaultPolicy8178F3A1",
+    "Roles": [
+     {
+      "Ref": "LambdaFunctionsreminderDispatchFnServiceRole8ED958C6"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/reminderDispatchFn/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "LambdaFunctionsreminderDispatchFn7674B1E0": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-216989120925-ap-south-1",
+     "S3Key": "9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLE_NAME": {
+       "Ref": "DynamoTablesMainTableDB68F392"
+      },
+      "BUCKET_NAME": {
+       "Ref": "PdfBucketFA9E115A"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      },
+      "USER_POOL_CLIENT_ID": {
+       "Ref": "UserPoolClient2F5918F7"
+      },
+      "AWS_REGION_OVERRIDE": "ap-south-1",
+      "NODE_ENV": "production",
+      "SNS_TOPIC_ARN": {
+       "Ref": "NotifTopic93A3095C"
+      }
+     }
+    },
+    "FunctionName": "deadlineai-reminderDispatch",
+    "Handler": "handlers/reminderDispatch.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaFunctionsreminderDispatchFnServiceRole8ED958C6",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 60
+   },
+   "DependsOn": [
+    "LambdaFunctionsreminderDispatchFnServiceRoleDefaultPolicy8178F3A1",
+    "LambdaFunctionsreminderDispatchFnServiceRole8ED958C6"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/reminderDispatchFn/Resource",
+    "aws:asset:path": "asset.9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "LambdaFunctionsreminderDispatchFnLogRetention31F59230": {
+   "Type": "Custom::LogRetention",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+      "Arn"
+     ]
+    },
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "LambdaFunctionsreminderDispatchFn7674B1E0"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 7
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/reminderDispatchFn/LogRetention/Resource"
+   }
+  },
+  "LambdaFunctionsautopsyInsightFnServiceRoleE22B92DA": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/autopsyInsightFn/ServiceRole/Resource"
+   }
+  },
+  "LambdaFunctionsautopsyInsightFnServiceRoleDefaultPolicy96E2A608": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DynamoTablesMainTableDB68F392",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DynamoTablesMainTableDB68F392",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DynamoTablesMainTableDB68F392",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DynamoTablesMainTableDB68F392",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": "bedrock:InvokeModel",
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LambdaFunctionsautopsyInsightFnServiceRoleDefaultPolicy96E2A608",
+    "Roles": [
+     {
+      "Ref": "LambdaFunctionsautopsyInsightFnServiceRoleE22B92DA"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/autopsyInsightFn/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "LambdaFunctionsautopsyInsightFn7BF9042B": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-216989120925-ap-south-1",
+     "S3Key": "9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLE_NAME": {
+       "Ref": "DynamoTablesMainTableDB68F392"
+      },
+      "BUCKET_NAME": {
+       "Ref": "PdfBucketFA9E115A"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      },
+      "USER_POOL_CLIENT_ID": {
+       "Ref": "UserPoolClient2F5918F7"
+      },
+      "AWS_REGION_OVERRIDE": "ap-south-1",
+      "NODE_ENV": "production"
+     }
+    },
+    "FunctionName": "deadlineai-autopsyInsight",
+    "Handler": "handlers/autopsyInsight.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaFunctionsautopsyInsightFnServiceRoleE22B92DA",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "LambdaFunctionsautopsyInsightFnServiceRoleDefaultPolicy96E2A608",
+    "LambdaFunctionsautopsyInsightFnServiceRoleE22B92DA"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/autopsyInsightFn/Resource",
+    "aws:asset:path": "asset.9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "LambdaFunctionsautopsyInsightFnLogRetentionF7ABF294": {
+   "Type": "Custom::LogRetention",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+      "Arn"
+     ]
+    },
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "LambdaFunctionsautopsyInsightFn7BF9042B"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 7
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/autopsyInsightFn/LogRetention/Resource"
+   }
+  },
+  "LambdaFunctionssquadOpsFnServiceRoleD07F20B3": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/squadOpsFn/ServiceRole/Resource"
+   }
+  },
+  "LambdaFunctionssquadOpsFnServiceRoleDefaultPolicy5CF31186": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DynamoTablesMainTableDB68F392",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DynamoTablesMainTableDB68F392",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DynamoTablesMainTableDB68F392",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DynamoTablesMainTableDB68F392",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LambdaFunctionssquadOpsFnServiceRoleDefaultPolicy5CF31186",
+    "Roles": [
+     {
+      "Ref": "LambdaFunctionssquadOpsFnServiceRoleD07F20B3"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/squadOpsFn/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "LambdaFunctionssquadOpsFn23B7E6C8": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-216989120925-ap-south-1",
+     "S3Key": "9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLE_NAME": {
+       "Ref": "DynamoTablesMainTableDB68F392"
+      },
+      "BUCKET_NAME": {
+       "Ref": "PdfBucketFA9E115A"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      },
+      "USER_POOL_CLIENT_ID": {
+       "Ref": "UserPoolClient2F5918F7"
+      },
+      "AWS_REGION_OVERRIDE": "ap-south-1",
+      "NODE_ENV": "production",
+      "WEBSOCKET_ENDPOINT": {
+       "Fn::Join": [
+        "",
+        [
+         "https://",
+         {
+          "Ref": "ApiGatewayWebSocketApiD6348217"
+         },
+         ".execute-api.ap-south-1.amazonaws.com/prod"
+        ]
+       ]
+      }
+     }
+    },
+    "FunctionName": "deadlineai-squadOps",
+    "Handler": "handlers/squadOps.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaFunctionssquadOpsFnServiceRoleD07F20B3",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 15
+   },
+   "DependsOn": [
+    "LambdaFunctionssquadOpsFnServiceRoleDefaultPolicy5CF31186",
+    "LambdaFunctionssquadOpsFnServiceRoleD07F20B3"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/squadOpsFn/Resource",
+    "aws:asset:path": "asset.9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "LambdaFunctionssquadOpsFnLogRetentionC9FECBEC": {
+   "Type": "Custom::LogRetention",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+      "Arn"
+     ]
+    },
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "LambdaFunctionssquadOpsFn23B7E6C8"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 7
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/squadOpsFn/LogRetention/Resource"
+   }
+  },
+  "LambdaFunctionssquadSyncFnServiceRole2C0A9C30": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/squadSyncFn/ServiceRole/Resource"
+   }
+  },
+  "LambdaFunctionssquadSyncFnServiceRoleDefaultPolicyFD3C99FF": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DynamoTablesMainTableDB68F392",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DynamoTablesMainTableDB68F392",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DynamoTablesMainTableDB68F392",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DynamoTablesMainTableDB68F392",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": "execute-api:ManageConnections",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:aws:execute-api:ap-south-1:216989120925:",
+          {
+           "Ref": "ApiGatewayWebSocketApiD6348217"
+          },
+          "/*"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LambdaFunctionssquadSyncFnServiceRoleDefaultPolicyFD3C99FF",
+    "Roles": [
+     {
+      "Ref": "LambdaFunctionssquadSyncFnServiceRole2C0A9C30"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/squadSyncFn/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "LambdaFunctionssquadSyncFn581395E6": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-216989120925-ap-south-1",
+     "S3Key": "9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLE_NAME": {
+       "Ref": "DynamoTablesMainTableDB68F392"
+      },
+      "BUCKET_NAME": {
+       "Ref": "PdfBucketFA9E115A"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      },
+      "USER_POOL_CLIENT_ID": {
+       "Ref": "UserPoolClient2F5918F7"
+      },
+      "AWS_REGION_OVERRIDE": "ap-south-1",
+      "NODE_ENV": "production",
+      "WEBSOCKET_ENDPOINT": {
+       "Fn::Join": [
+        "",
+        [
+         "https://",
+         {
+          "Ref": "ApiGatewayWebSocketApiD6348217"
+         },
+         ".execute-api.ap-south-1.amazonaws.com/prod"
+        ]
+       ]
+      }
+     }
+    },
+    "FunctionName": "deadlineai-squadSync",
+    "Handler": "handlers/squadSync.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaFunctionssquadSyncFnServiceRole2C0A9C30",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "LambdaFunctionssquadSyncFnServiceRoleDefaultPolicyFD3C99FF",
+    "LambdaFunctionssquadSyncFnServiceRole2C0A9C30"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/squadSyncFn/Resource",
+    "aws:asset:path": "asset.9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "LambdaFunctionssquadSyncFnLogRetention8CE307EB": {
+   "Type": "Custom::LogRetention",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+      "Arn"
+     ]
+    },
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "LambdaFunctionssquadSyncFn581395E6"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 7
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/squadSyncFn/LogRetention/Resource"
+   }
+  },
+  "LambdaFunctionssquadSyncFnWebSocketInvoke019A3A39": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionssquadSyncFn581395E6",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayWebSocketApiD6348217"
+       },
+       "/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/squadSyncFn/WebSocketInvoke"
+   }
+  },
+  "LambdaFunctionsprocrastinationWatchFnServiceRole728162A7": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/procrastinationWatchFn/ServiceRole/Resource"
+   }
+  },
+  "LambdaFunctionsprocrastinationWatchFnServiceRoleDefaultPolicyBDE67CE2": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DynamoTablesMainTableDB68F392",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DynamoTablesMainTableDB68F392",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DynamoTablesMainTableDB68F392",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DynamoTablesMainTableDB68F392",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": "dynamodb:ListStreams",
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "dynamodb:DescribeStream",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "DynamoTablesMainTableDB68F392",
+         "StreamArn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LambdaFunctionsprocrastinationWatchFnServiceRoleDefaultPolicyBDE67CE2",
+    "Roles": [
+     {
+      "Ref": "LambdaFunctionsprocrastinationWatchFnServiceRole728162A7"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/procrastinationWatchFn/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "LambdaFunctionsprocrastinationWatchFnC5C11BCC": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-216989120925-ap-south-1",
+     "S3Key": "9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLE_NAME": {
+       "Ref": "DynamoTablesMainTableDB68F392"
+      },
+      "BUCKET_NAME": {
+       "Ref": "PdfBucketFA9E115A"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      },
+      "USER_POOL_CLIENT_ID": {
+       "Ref": "UserPoolClient2F5918F7"
+      },
+      "AWS_REGION_OVERRIDE": "ap-south-1",
+      "NODE_ENV": "production"
+     }
+    },
+    "FunctionName": "deadlineai-procrastinationWatch",
+    "Handler": "handlers/procrastinationWatch.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaFunctionsprocrastinationWatchFnServiceRole728162A7",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 15
+   },
+   "DependsOn": [
+    "LambdaFunctionsprocrastinationWatchFnServiceRoleDefaultPolicyBDE67CE2",
+    "LambdaFunctionsprocrastinationWatchFnServiceRole728162A7"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/procrastinationWatchFn/Resource",
+    "aws:asset:path": "asset.9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "LambdaFunctionsprocrastinationWatchFnLogRetentionEB42190A": {
+   "Type": "Custom::LogRetention",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+      "Arn"
+     ]
+    },
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "LambdaFunctionsprocrastinationWatchFnC5C11BCC"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 7
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/procrastinationWatchFn/LogRetention/Resource"
+   }
+  },
+  "LambdaFunctionsprocrastinationWatchFnDynamoDBEventSourceDeadlineAiStackDynamoTablesMainTable807BADBB42574BD6": {
+   "Type": "AWS::Lambda::EventSourceMapping",
+   "Properties": {
+    "BatchSize": 10,
+    "EventSourceArn": {
+     "Fn::GetAtt": [
+      "DynamoTablesMainTableDB68F392",
+      "StreamArn"
+     ]
+    },
+    "FunctionName": {
+     "Ref": "LambdaFunctionsprocrastinationWatchFnC5C11BCC"
+    },
+    "MaximumRetryAttempts": 2,
+    "StartingPosition": "TRIM_HORIZON"
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LambdaFunctions/procrastinationWatchFn/DynamoDBEventSource:DeadlineAiStackDynamoTablesMainTable807BADBB/Resource"
+   }
+  },
+  "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/Resource"
+   }
+  },
+  "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:PutRetentionPolicy",
+        "logs:DeleteRetentionPolicy"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+    "Roles": [
+     {
+      "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Handler": "index.handler",
+    "Runtime": "nodejs22.x",
+    "Timeout": 900,
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-216989120925-ap-south-1",
+     "S3Key": "2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d.zip"
+    },
+    "Role": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Resource",
+    "aws:asset:path": "asset.2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ApiGatewayRestApi7538854B": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Description": "DeadlineAI Backend REST API",
+    "Name": "DeadlineAI API"
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Resource"
+   }
+  },
+  "ApiGatewayRestApiCloudWatchRoleC428F9CB": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/CloudWatchRole/Resource"
+   }
+  },
+  "ApiGatewayRestApiAccount6F7770AB": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "ApiGatewayRestApiCloudWatchRoleC428F9CB",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "ApiGatewayRestApi7538854B"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Account"
+   }
+  },
+  "ApiGatewayRestApiDeploymentF39605600bc51abbdde289419e6eff3c2739ce8a": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "DeadlineAI Backend REST API",
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "DependsOn": [
+    "ApiGatewayRestApiautopsiesOPTIONS8F3AAC0B",
+    "ApiGatewayRestApiautopsiesPOST5D5DD16F",
+    "ApiGatewayRestApiautopsies1C27B289",
+    "ApiGatewayRestApideadlinesdeadlineIdOPTIONSE6862946",
+    "ApiGatewayRestApideadlinesdeadlineIdpaceOPTIONS444560D8",
+    "ApiGatewayRestApideadlinesdeadlineIdpacePOSTD10D607C",
+    "ApiGatewayRestApideadlinesdeadlineIdpaceA0C6C5B1",
+    "ApiGatewayRestApideadlinesdeadlineId224B102A",
+    "ApiGatewayRestApideadlinesclashesGET9862F941",
+    "ApiGatewayRestApideadlinesclashesOPTIONS4A7BD41B",
+    "ApiGatewayRestApideadlinesclashesD3853D20",
+    "ApiGatewayRestApideadlinesconfirmOPTIONSCD602621",
+    "ApiGatewayRestApideadlinesconfirmPOST464C2301",
+    "ApiGatewayRestApideadlinesconfirm019EFA75",
+    "ApiGatewayRestApideadlinesGET04D6D92F",
+    "ApiGatewayRestApideadlinesOPTIONSC3CC5472",
+    "ApiGatewayRestApideadlines5A28B245",
+    "ApiGatewayRestApiOPTIONSDE91A6D5",
+    "ApiGatewayRestApisquadssquadIdDELETE2B546F69",
+    "ApiGatewayRestApisquadssquadIdGETC51FD835",
+    "ApiGatewayRestApisquadssquadIdOPTIONSE3785597",
+    "ApiGatewayRestApisquadssquadIdF6588732",
+    "ApiGatewayRestApisquadsGETB0CD394F",
+    "ApiGatewayRestApisquadsjoinOPTIONSA4841EF0",
+    "ApiGatewayRestApisquadsjoinPOST5B98B9BC",
+    "ApiGatewayRestApisquadsjoin5C0DAB8E",
+    "ApiGatewayRestApisquadsOPTIONS000E8E93",
+    "ApiGatewayRestApisquadsPOST8B93674E",
+    "ApiGatewayRestApisquads5B1ACBF7",
+    "ApiGatewayRestApisyllabiOPTIONS76A48703",
+    "ApiGatewayRestApisyllabi1C95B8FC",
+    "ApiGatewayRestApisyllabiuploadOPTIONSDCC2E60B",
+    "ApiGatewayRestApisyllabiuploadPOSTFA11730A",
+    "ApiGatewayRestApisyllabiupload46A44023"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Deployment/Resource",
+    "aws:cdk:do-not-refactor": true
+   }
+  },
+  "ApiGatewayRestApiDeploymentStageprod083524AB": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "ApiGatewayRestApiDeploymentF39605600bc51abbdde289419e6eff3c2739ce8a"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    },
+    "StageName": "prod"
+   },
+   "DependsOn": [
+    "ApiGatewayRestApiAccount6F7770AB"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/DeploymentStage.prod/Resource"
+   }
+  },
+  "ApiGatewayRestApiOPTIONSDE91A6D5": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Authorization,Content-Type'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "ApiGatewayRestApi7538854B",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/OPTIONS/Resource"
+   }
+  },
+  "ApiGatewayRestApisyllabi1C95B8FC": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "ApiGatewayRestApi7538854B",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "syllabi",
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/syllabi/Resource"
+   }
+  },
+  "ApiGatewayRestApisyllabiOPTIONS76A48703": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Authorization,Content-Type'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApisyllabi1C95B8FC"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/syllabi/OPTIONS/Resource"
+   }
+  },
+  "ApiGatewayRestApisyllabiupload46A44023": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "ApiGatewayRestApisyllabi1C95B8FC"
+    },
+    "PathPart": "upload",
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/syllabi/upload/Resource"
+   }
+  },
+  "ApiGatewayRestApisyllabiuploadOPTIONSDCC2E60B": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Authorization,Content-Type'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApisyllabiupload46A44023"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/syllabi/upload/OPTIONS/Resource"
+   }
+  },
+  "ApiGatewayRestApisyllabiuploadPOSTApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EPOSTsyllabiupload462CFF90": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionspdfIngestFn4A54BB23",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/",
+       {
+        "Ref": "ApiGatewayRestApiDeploymentStageprod083524AB"
+       },
+       "/POST/syllabi/upload"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/syllabi/upload/POST/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..syllabi.upload"
+   }
+  },
+  "ApiGatewayRestApisyllabiuploadPOSTApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EPOSTsyllabiupload58BB75A8": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionspdfIngestFn4A54BB23",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/test-invoke-stage/POST/syllabi/upload"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/syllabi/upload/POST/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..syllabi.upload"
+   }
+  },
+  "ApiGatewayRestApisyllabiuploadPOSTFA11730A": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "ApiGatewayCognitoAuth569868E7"
+    },
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:ap-south-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "LambdaFunctionspdfIngestFn4A54BB23",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApisyllabiupload46A44023"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/syllabi/upload/POST/Resource"
+   }
+  },
+  "ApiGatewayRestApideadlines5A28B245": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "ApiGatewayRestApi7538854B",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "deadlines",
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/Resource"
+   }
+  },
+  "ApiGatewayRestApideadlinesOPTIONSC3CC5472": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Authorization,Content-Type'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApideadlines5A28B245"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/OPTIONS/Resource"
+   }
+  },
+  "ApiGatewayRestApideadlinesGETApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EGETdeadlinesFA68BCF0": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionsgetDeadlinesFn0D69D4CB",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/",
+       {
+        "Ref": "ApiGatewayRestApiDeploymentStageprod083524AB"
+       },
+       "/GET/deadlines"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/GET/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.GET..deadlines"
+   }
+  },
+  "ApiGatewayRestApideadlinesGETApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EGETdeadlinesF4A67F77": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionsgetDeadlinesFn0D69D4CB",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/test-invoke-stage/GET/deadlines"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/GET/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.GET..deadlines"
+   }
+  },
+  "ApiGatewayRestApideadlinesGET04D6D92F": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "ApiGatewayCognitoAuth569868E7"
+    },
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:ap-south-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "LambdaFunctionsgetDeadlinesFn0D69D4CB",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApideadlines5A28B245"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/GET/Resource"
+   }
+  },
+  "ApiGatewayRestApideadlinesconfirm019EFA75": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "ApiGatewayRestApideadlines5A28B245"
+    },
+    "PathPart": "confirm",
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/confirm/Resource"
+   }
+  },
+  "ApiGatewayRestApideadlinesconfirmOPTIONSCD602621": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Authorization,Content-Type'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApideadlinesconfirm019EFA75"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/confirm/OPTIONS/Resource"
+   }
+  },
+  "ApiGatewayRestApideadlinesconfirmPOSTApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EPOSTdeadlinesconfirmD401B308": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionsconfirmDeadlinesFn5A1D6206",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/",
+       {
+        "Ref": "ApiGatewayRestApiDeploymentStageprod083524AB"
+       },
+       "/POST/deadlines/confirm"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/confirm/POST/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..deadlines.confirm"
+   }
+  },
+  "ApiGatewayRestApideadlinesconfirmPOSTApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EPOSTdeadlinesconfirm4713AFCB": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionsconfirmDeadlinesFn5A1D6206",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/test-invoke-stage/POST/deadlines/confirm"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/confirm/POST/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..deadlines.confirm"
+   }
+  },
+  "ApiGatewayRestApideadlinesconfirmPOST464C2301": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "ApiGatewayCognitoAuth569868E7"
+    },
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:ap-south-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "LambdaFunctionsconfirmDeadlinesFn5A1D6206",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApideadlinesconfirm019EFA75"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/confirm/POST/Resource"
+   }
+  },
+  "ApiGatewayRestApideadlinesclashesD3853D20": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "ApiGatewayRestApideadlines5A28B245"
+    },
+    "PathPart": "clashes",
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/clashes/Resource"
+   }
+  },
+  "ApiGatewayRestApideadlinesclashesOPTIONS4A7BD41B": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Authorization,Content-Type'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApideadlinesclashesD3853D20"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/clashes/OPTIONS/Resource"
+   }
+  },
+  "ApiGatewayRestApideadlinesclashesGETApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EGETdeadlinesclashesE7D8082A": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionsclashAnalysisFn4065E82E",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/",
+       {
+        "Ref": "ApiGatewayRestApiDeploymentStageprod083524AB"
+       },
+       "/GET/deadlines/clashes"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/clashes/GET/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.GET..deadlines.clashes"
+   }
+  },
+  "ApiGatewayRestApideadlinesclashesGETApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EGETdeadlinesclashesADA820A4": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionsclashAnalysisFn4065E82E",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/test-invoke-stage/GET/deadlines/clashes"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/clashes/GET/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.GET..deadlines.clashes"
+   }
+  },
+  "ApiGatewayRestApideadlinesclashesGET9862F941": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "ApiGatewayCognitoAuth569868E7"
+    },
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:ap-south-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "LambdaFunctionsclashAnalysisFn4065E82E",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApideadlinesclashesD3853D20"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/clashes/GET/Resource"
+   }
+  },
+  "ApiGatewayRestApideadlinesdeadlineId224B102A": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "ApiGatewayRestApideadlines5A28B245"
+    },
+    "PathPart": "{deadlineId}",
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/{deadlineId}/Resource"
+   }
+  },
+  "ApiGatewayRestApideadlinesdeadlineIdOPTIONSE6862946": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Authorization,Content-Type'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApideadlinesdeadlineId224B102A"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/{deadlineId}/OPTIONS/Resource"
+   }
+  },
+  "ApiGatewayRestApideadlinesdeadlineIdpaceA0C6C5B1": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "ApiGatewayRestApideadlinesdeadlineId224B102A"
+    },
+    "PathPart": "pace",
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/{deadlineId}/pace/Resource"
+   }
+  },
+  "ApiGatewayRestApideadlinesdeadlineIdpaceOPTIONS444560D8": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Authorization,Content-Type'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApideadlinesdeadlineIdpaceA0C6C5B1"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/{deadlineId}/pace/OPTIONS/Resource"
+   }
+  },
+  "ApiGatewayRestApideadlinesdeadlineIdpacePOSTApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EPOSTdeadlinesdeadlineIdpace472190DE": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionspaceSchedulerFnE6AA3D07",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/",
+       {
+        "Ref": "ApiGatewayRestApiDeploymentStageprod083524AB"
+       },
+       "/POST/deadlines/*/pace"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/{deadlineId}/pace/POST/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..deadlines.{deadlineId}.pace"
+   }
+  },
+  "ApiGatewayRestApideadlinesdeadlineIdpacePOSTApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EPOSTdeadlinesdeadlineIdpaceBAC79A6A": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionspaceSchedulerFnE6AA3D07",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/test-invoke-stage/POST/deadlines/*/pace"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/{deadlineId}/pace/POST/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..deadlines.{deadlineId}.pace"
+   }
+  },
+  "ApiGatewayRestApideadlinesdeadlineIdpacePOSTD10D607C": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "ApiGatewayCognitoAuth569868E7"
+    },
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:ap-south-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "LambdaFunctionspaceSchedulerFnE6AA3D07",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApideadlinesdeadlineIdpaceA0C6C5B1"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/deadlines/{deadlineId}/pace/POST/Resource"
+   }
+  },
+  "ApiGatewayRestApiautopsies1C27B289": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "ApiGatewayRestApi7538854B",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "autopsies",
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/autopsies/Resource"
+   }
+  },
+  "ApiGatewayRestApiautopsiesOPTIONS8F3AAC0B": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Authorization,Content-Type'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApiautopsies1C27B289"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/autopsies/OPTIONS/Resource"
+   }
+  },
+  "ApiGatewayRestApiautopsiesPOSTApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EPOSTautopsies03FDBA39": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionsautopsyInsightFn7BF9042B",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/",
+       {
+        "Ref": "ApiGatewayRestApiDeploymentStageprod083524AB"
+       },
+       "/POST/autopsies"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/autopsies/POST/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..autopsies"
+   }
+  },
+  "ApiGatewayRestApiautopsiesPOSTApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EPOSTautopsiesB350F7C6": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionsautopsyInsightFn7BF9042B",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/test-invoke-stage/POST/autopsies"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/autopsies/POST/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..autopsies"
+   }
+  },
+  "ApiGatewayRestApiautopsiesPOST5D5DD16F": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "ApiGatewayCognitoAuth569868E7"
+    },
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:ap-south-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "LambdaFunctionsautopsyInsightFn7BF9042B",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApiautopsies1C27B289"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/autopsies/POST/Resource"
+   }
+  },
+  "ApiGatewayRestApisquads5B1ACBF7": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "ApiGatewayRestApi7538854B",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "squads",
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/squads/Resource"
+   }
+  },
+  "ApiGatewayRestApisquadsOPTIONS000E8E93": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Authorization,Content-Type'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApisquads5B1ACBF7"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/squads/OPTIONS/Resource"
+   }
+  },
+  "ApiGatewayRestApisquadsPOSTApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EPOSTsquadsBA3E3695": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionssquadOpsFn23B7E6C8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/",
+       {
+        "Ref": "ApiGatewayRestApiDeploymentStageprod083524AB"
+       },
+       "/POST/squads"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/squads/POST/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..squads"
+   }
+  },
+  "ApiGatewayRestApisquadsPOSTApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EPOSTsquads201816CC": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionssquadOpsFn23B7E6C8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/test-invoke-stage/POST/squads"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/squads/POST/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..squads"
+   }
+  },
+  "ApiGatewayRestApisquadsPOST8B93674E": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "ApiGatewayCognitoAuth569868E7"
+    },
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:ap-south-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "LambdaFunctionssquadOpsFn23B7E6C8",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApisquads5B1ACBF7"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/squads/POST/Resource"
+   }
+  },
+  "ApiGatewayRestApisquadsGETApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EGETsquads06084619": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionssquadOpsFn23B7E6C8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/",
+       {
+        "Ref": "ApiGatewayRestApiDeploymentStageprod083524AB"
+       },
+       "/GET/squads"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/squads/GET/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.GET..squads"
+   }
+  },
+  "ApiGatewayRestApisquadsGETApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EGETsquads21B03C15": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionssquadOpsFn23B7E6C8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/test-invoke-stage/GET/squads"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/squads/GET/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.GET..squads"
+   }
+  },
+  "ApiGatewayRestApisquadsGETB0CD394F": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "ApiGatewayCognitoAuth569868E7"
+    },
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:ap-south-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "LambdaFunctionssquadOpsFn23B7E6C8",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApisquads5B1ACBF7"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/squads/GET/Resource"
+   }
+  },
+  "ApiGatewayRestApisquadssquadIdF6588732": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "ApiGatewayRestApisquads5B1ACBF7"
+    },
+    "PathPart": "{squadId}",
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/squads/{squadId}/Resource"
+   }
+  },
+  "ApiGatewayRestApisquadssquadIdOPTIONSE3785597": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Authorization,Content-Type'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApisquadssquadIdF6588732"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/squads/{squadId}/OPTIONS/Resource"
+   }
+  },
+  "ApiGatewayRestApisquadssquadIdGETApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EGETsquadssquadIdCBABCB4C": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionssquadOpsFn23B7E6C8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/",
+       {
+        "Ref": "ApiGatewayRestApiDeploymentStageprod083524AB"
+       },
+       "/GET/squads/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/squads/{squadId}/GET/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.GET..squads.{squadId}"
+   }
+  },
+  "ApiGatewayRestApisquadssquadIdGETApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EGETsquadssquadIdEA29A6B0": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionssquadOpsFn23B7E6C8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/test-invoke-stage/GET/squads/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/squads/{squadId}/GET/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.GET..squads.{squadId}"
+   }
+  },
+  "ApiGatewayRestApisquadssquadIdGETC51FD835": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "ApiGatewayCognitoAuth569868E7"
+    },
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:ap-south-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "LambdaFunctionssquadOpsFn23B7E6C8",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApisquadssquadIdF6588732"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/squads/{squadId}/GET/Resource"
+   }
+  },
+  "ApiGatewayRestApisquadssquadIdDELETEApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EDELETEsquadssquadId63827FE4": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionssquadOpsFn23B7E6C8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/",
+       {
+        "Ref": "ApiGatewayRestApiDeploymentStageprod083524AB"
+       },
+       "/DELETE/squads/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/squads/{squadId}/DELETE/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.DELETE..squads.{squadId}"
+   }
+  },
+  "ApiGatewayRestApisquadssquadIdDELETEApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EDELETEsquadssquadId5754F005": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionssquadOpsFn23B7E6C8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/test-invoke-stage/DELETE/squads/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/squads/{squadId}/DELETE/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.DELETE..squads.{squadId}"
+   }
+  },
+  "ApiGatewayRestApisquadssquadIdDELETE2B546F69": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "ApiGatewayCognitoAuth569868E7"
+    },
+    "HttpMethod": "DELETE",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:ap-south-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "LambdaFunctionssquadOpsFn23B7E6C8",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApisquadssquadIdF6588732"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/squads/{squadId}/DELETE/Resource"
+   }
+  },
+  "ApiGatewayRestApisquadsjoin5C0DAB8E": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "ApiGatewayRestApisquads5B1ACBF7"
+    },
+    "PathPart": "join",
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/squads/join/Resource"
+   }
+  },
+  "ApiGatewayRestApisquadsjoinOPTIONSA4841EF0": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Authorization,Content-Type'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApisquadsjoin5C0DAB8E"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/squads/join/OPTIONS/Resource"
+   }
+  },
+  "ApiGatewayRestApisquadsjoinPOSTApiPermissionDeadlineAiStackApiGatewayRestApiEB0F013EPOSTsquadsjoin69C6D437": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionssquadOpsFn23B7E6C8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/",
+       {
+        "Ref": "ApiGatewayRestApiDeploymentStageprod083524AB"
+       },
+       "/POST/squads/join"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/squads/join/POST/ApiPermission.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..squads.join"
+   }
+  },
+  "ApiGatewayRestApisquadsjoinPOSTApiPermissionTestDeadlineAiStackApiGatewayRestApiEB0F013EPOSTsquadsjoinD7FC49A2": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionssquadOpsFn23B7E6C8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:216989120925:",
+       {
+        "Ref": "ApiGatewayRestApi7538854B"
+       },
+       "/test-invoke-stage/POST/squads/join"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/squads/join/POST/ApiPermission.Test.DeadlineAiStackApiGatewayRestApiEB0F013E.POST..squads.join"
+   }
+  },
+  "ApiGatewayRestApisquadsjoinPOST5B98B9BC": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "ApiGatewayCognitoAuth569868E7"
+    },
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:ap-south-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "LambdaFunctionssquadOpsFn23B7E6C8",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "ApiGatewayRestApisquadsjoin5C0DAB8E"
+    },
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/RestApi/Default/squads/join/POST/Resource"
+   }
+  },
+  "ApiGatewayCognitoAuth569868E7": {
+   "Type": "AWS::ApiGateway::Authorizer",
+   "Properties": {
+    "IdentitySource": "method.request.header.Authorization",
+    "Name": "DeadlineAiStackApiGatewayCognitoAuthEFD78C9D",
+    "ProviderARNs": [
+     {
+      "Fn::GetAtt": [
+       "UserPool6BA7E5F2",
+       "Arn"
+      ]
+     }
+    ],
+    "RestApiId": {
+     "Ref": "ApiGatewayRestApi7538854B"
+    },
+    "Type": "COGNITO_USER_POOLS"
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/CognitoAuth/Resource"
+   }
+  },
+  "ApiGatewayWebSocketApiD6348217": {
+   "Type": "AWS::ApiGatewayV2::Api",
+   "Properties": {
+    "Name": "DeadlineAI-WebSocket",
+    "ProtocolType": "WEBSOCKET",
+    "RouteSelectionExpression": "$request.body.action"
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/WebSocketApi"
+   }
+  },
+  "ApiGatewayConnectIntegrationF1BF9A41": {
+   "Type": "AWS::ApiGatewayV2::Integration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "ApiGatewayWebSocketApiD6348217"
+    },
+    "IntegrationType": "AWS_PROXY",
+    "IntegrationUri": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:apigateway:ap-south-1:lambda:path/2015-03-31/functions/",
+       {
+        "Fn::GetAtt": [
+         "LambdaFunctionssquadSyncFn581395E6",
+         "Arn"
+        ]
+       },
+       "/invocations"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/ConnectIntegration"
+   }
+  },
+  "ApiGatewayConnectRoute5E5A23EC": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "ApiGatewayWebSocketApiD6348217"
+    },
+    "AuthorizationType": "NONE",
+    "RouteKey": "$connect",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "ApiGatewayConnectIntegrationF1BF9A41"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/ConnectRoute"
+   }
+  },
+  "ApiGatewayDisconnectIntegration2569C249": {
+   "Type": "AWS::ApiGatewayV2::Integration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "ApiGatewayWebSocketApiD6348217"
+    },
+    "IntegrationType": "AWS_PROXY",
+    "IntegrationUri": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:apigateway:ap-south-1:lambda:path/2015-03-31/functions/",
+       {
+        "Fn::GetAtt": [
+         "LambdaFunctionssquadSyncFn581395E6",
+         "Arn"
+        ]
+       },
+       "/invocations"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/DisconnectIntegration"
+   }
+  },
+  "ApiGatewayDisconnectRouteCEA15451": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "ApiGatewayWebSocketApiD6348217"
+    },
+    "RouteKey": "$disconnect",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "ApiGatewayDisconnectIntegration2569C249"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/DisconnectRoute"
+   }
+  },
+  "ApiGatewayDefaultIntegration7BD5045B": {
+   "Type": "AWS::ApiGatewayV2::Integration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "ApiGatewayWebSocketApiD6348217"
+    },
+    "IntegrationType": "AWS_PROXY",
+    "IntegrationUri": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:apigateway:ap-south-1:lambda:path/2015-03-31/functions/",
+       {
+        "Fn::GetAtt": [
+         "LambdaFunctionssquadSyncFn581395E6",
+         "Arn"
+        ]
+       },
+       "/invocations"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/DefaultIntegration"
+   }
+  },
+  "ApiGatewayDefaultRoute92A7574F": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "ApiGatewayWebSocketApiD6348217"
+    },
+    "RouteKey": "$default",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "ApiGatewayDefaultIntegration7BD5045B"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/DefaultRoute"
+   }
+  },
+  "ApiGatewayWebSocketStageA373DF4D": {
+   "Type": "AWS::ApiGatewayV2::Stage",
+   "Properties": {
+    "ApiId": {
+     "Ref": "ApiGatewayWebSocketApiD6348217"
+    },
+    "AutoDeploy": true,
+    "StageName": "prod"
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/ApiGateway/WebSocketStage"
+   }
+  },
+  "EventBridgeRulesReminderScheduleA32BB1D6": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "Name": "deadlineai-reminder-dispatch",
+    "ScheduleExpression": "rate(15 minutes)",
+    "State": "ENABLED",
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::GetAtt": [
+        "LambdaFunctionsreminderDispatchFn7674B1E0",
+        "Arn"
+       ]
+      },
+      "Id": "Target0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/EventBridgeRules/ReminderSchedule/Resource"
+   }
+  },
+  "EventBridgeRulesReminderScheduleAllowEventRuleDeadlineAiStackLambdaFunctionsreminderDispatchFnF09456F47B2E25D9": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionsreminderDispatchFn7674B1E0",
+      "Arn"
+     ]
+    },
+    "Principal": "events.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "EventBridgeRulesReminderScheduleA32BB1D6",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/EventBridgeRules/ReminderSchedule/AllowEventRuleDeadlineAiStackLambdaFunctionsreminderDispatchFnF09456F4"
+   }
+  },
+  "EventBridgeRulesAutopsyDaily6EBAA07B": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "Name": "deadlineai-autopsy-daily",
+    "ScheduleExpression": "cron(30 4 * * ? *)",
+    "State": "ENABLED",
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::GetAtt": [
+        "LambdaFunctionsautopsyInsightFn7BF9042B",
+        "Arn"
+       ]
+      },
+      "Id": "Target0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/EventBridgeRules/AutopsyDaily/Resource"
+   }
+  },
+  "EventBridgeRulesAutopsyDailyAllowEventRuleDeadlineAiStackLambdaFunctionsautopsyInsightFnFDC73A986F1728B9": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaFunctionsautopsyInsightFn7BF9042B",
+      "Arn"
+     ]
+    },
+    "Principal": "events.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "EventBridgeRulesAutopsyDaily6EBAA07B",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/EventBridgeRules/AutopsyDaily/AllowEventRuleDeadlineAiStackLambdaFunctionsautopsyInsightFnFDC73A98"
+   }
+  },
+  "NotifTopic93A3095C": {
+   "Type": "AWS::SNS::Topic",
+   "Properties": {
+    "TopicName": "deadlineai-notifications"
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/NotifTopic/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/5VSTW8TMRD9Lc3ZMZAWCXFLU5CQqBql5YRQ5XiHrRPbs/LYKcHyf8cfm2YruHDyG7/5ePPsBV9cXfG3F+KZ5rLbz7Xa8njvhdyzfPUY6ZLH6yD34Nnqp23oe5wZ9UvZ2cfZtKzk5/RKEW+py+DxBjR4uNvuQHqapR+sUWvUSh7PXVv8H71bQdbqwYCdtr4WBIlJ7K3yyOM3ArdG1GXWCz6BlVa5eEq1m8S6oxUGu+zHg9hqKCkVJKaF2XaCx8/BSq/QFmqK1+CMIirRp0PudY/BSbgVw6BsXxL+vk1MCcPjBtugep4daigxunwUROCJL8vBNPbEv2K/yQbbOl0Mqs+GPItjbgbkl4Oq/c5wKSWGvPENDBqPZlx+EmVH+yqigVxahRZT2S34J+wKOaITOw4ZcXP+ZCjlX/CETv0GVwW8RGki97DgsZBN5BfroXfiZOgGgz9LSgyKf5Q3DKNdoTwL5a8RH3BQsr5VASmxVSCP5t86X1FrhwfVgauLVn/LtPJi0+K74IeQf4fFDviO3hwW7/kH/u5iR0rNXTZWGeCbdv4BEPqRTF0DAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "DeadlineAiStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "ApiGatewayRestApiEndpoint8A8A12DA": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "ApiGatewayRestApi7538854B"
+      },
+      ".execute-api.ap-south-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "ApiGatewayRestApiDeploymentStageprod083524AB"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "ApiUrl": {
+   "Description": "REST API URL",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "ApiGatewayRestApi7538854B"
+      },
+      ".execute-api.ap-south-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "ApiGatewayRestApiDeploymentStageprod083524AB"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "WebSocketUrl": {
+   "Description": "WebSocket API URL",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "wss://",
+      {
+       "Ref": "ApiGatewayWebSocketApiD6348217"
+      },
+      ".execute-api.ap-south-1.amazonaws.com/prod"
+     ]
+    ]
+   }
+  },
+  "UserPoolId": {
+   "Value": {
+    "Ref": "UserPool6BA7E5F2"
+   }
+  },
+  "UserPoolClientId": {
+   "Value": {
+    "Ref": "UserPoolClient2F5918F7"
+   }
+  },
+  "TableName": {
+   "Value": {
+    "Ref": "DynamoTablesMainTableDB68F392"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

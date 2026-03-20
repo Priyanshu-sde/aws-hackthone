@@ -23,18 +23,12 @@ export class LambdaFunctions extends Construct {
 
     const srcPath = path.join(__dirname, '..', '..', '..', 'src');
 
-    // Environment variables — Twilio creds are set directly (no SSM)
-    // Set real values via CDK context, CLI overrides, or edit after deploy
     const commonEnv: Record<string, string> = {
       TABLE_NAME: props.table.tableName,
       BUCKET_NAME: props.bucket.bucketName,
       USER_POOL_ID: props.userPool.userPoolId,
       USER_POOL_CLIENT_ID: props.userPoolClient.userPoolClientId,
       AWS_REGION_OVERRIDE: 'ap-south-1',
-      // Twilio — replace with real values before deploy or update in Lambda console
-      TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID || 'REPLACE_ME',
-      TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN || 'REPLACE_ME',
-      TWILIO_WHATSAPP_FROM: process.env.TWILIO_WHATSAPP_FROM || 'whatsapp:+14155238886',
       NODE_ENV: 'production',
     };
 

@@ -3,7 +3,7 @@ import { DynamoDBDocumentClient, PutCommand, BatchWriteCommand } from '@aws-sdk/
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 
-const client = new DynamoDBClient({ region: process.env.AWS_REGION || 'us-east-1' });
+const client = new DynamoDBClient({ region: process.env.AWS_REGION || 'ap-south-1' });
 const docClient = DynamoDBDocumentClient.from(client, {
   marshallOptions: { removeUndefinedValues: true },
 });
@@ -35,14 +35,10 @@ function makeDeadline(id, overrides) {
     deadlineId,
     status: 'active',
     reminderSchedule: [],
-    nextReminderAt: null,
-    reminderStatus: 'PENDING',
     remindersDismissed: 0,
     paceModeSessionsCompleted: 0,
     isHardDeadline: true,
     buddyNotified: false,
-    sharedWithSquad: null,
-    squadId: null,
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
     ...overrides,

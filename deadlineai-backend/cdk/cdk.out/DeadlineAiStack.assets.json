@@ -1,0 +1,66 @@
+{
+  "version": "52.0.0",
+  "files": {
+    "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6": {
+      "displayName": "DeadlineAiStack/Custom::S3AutoDeleteObjectsCustomResourceProvider Code",
+      "source": {
+        "path": "asset.faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "216989120925-ap-south-1-19e2fcf6": {
+          "bucketName": "cdk-hnb659fds-assets-216989120925-ap-south-1",
+          "objectKey": "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6.zip",
+          "region": "ap-south-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::216989120925:role/cdk-hnb659fds-file-publishing-role-216989120925-ap-south-1"
+        }
+      }
+    },
+    "9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d": {
+      "displayName": "LambdaFunctions/pdfIngestFn/Code",
+      "source": {
+        "path": "asset.9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "216989120925-ap-south-1-22e445af": {
+          "bucketName": "cdk-hnb659fds-assets-216989120925-ap-south-1",
+          "objectKey": "9839389f467684811966734c0e3eff9a1395417d0c0b3683f3f51ad86862728d.zip",
+          "region": "ap-south-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::216989120925:role/cdk-hnb659fds-file-publishing-role-216989120925-ap-south-1"
+        }
+      }
+    },
+    "2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d": {
+      "displayName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Code",
+      "source": {
+        "path": "asset.2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "216989120925-ap-south-1-976bfbb5": {
+          "bucketName": "cdk-hnb659fds-assets-216989120925-ap-south-1",
+          "objectKey": "2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d.zip",
+          "region": "ap-south-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::216989120925:role/cdk-hnb659fds-file-publishing-role-216989120925-ap-south-1"
+        }
+      }
+    },
+    "4d5c172096fa175a316ef4b542d4ac3e831699f19fa91af9759a3eacd2c7fbfc": {
+      "displayName": "DeadlineAiStack Template",
+      "source": {
+        "path": "DeadlineAiStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "216989120925-ap-south-1-ba354b90": {
+          "bucketName": "cdk-hnb659fds-assets-216989120925-ap-south-1",
+          "objectKey": "4d5c172096fa175a316ef4b542d4ac3e831699f19fa91af9759a3eacd2c7fbfc.json",
+          "region": "ap-south-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::216989120925:role/cdk-hnb659fds-file-publishing-role-216989120925-ap-south-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

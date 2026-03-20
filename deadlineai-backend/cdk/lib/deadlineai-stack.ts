@@ -1,7 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
-import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as sns from 'aws-cdk-lib/aws-sns';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
@@ -24,7 +23,7 @@ export class DeadlineAiStack extends cdk.Stack {
       autoDeleteObjects: true,
       lifecycleRules: [
         {
-          expiration: cdk.Duration.hours(1),
+          expiration: cdk.Duration.days(1), // HACKATHON NOTE: S3 minimum is 1 day; in production use a cleanup Lambda for shorter TTL
           enabled: true,
         },
       ],
@@ -60,37 +59,6 @@ export class DeadlineAiStack extends cdk.Stack {
         userSrp: true,
       },
       generateSecret: false,
-    });
-
-    // SSM Parameters (placeholders — developer sets real values before deploy)
-    // These are created only if they don't already exist; CDK will manage them
-    // HACKATHON NOTE: In production, these would be managed outside CDK via a secrets rotation process
-    new ssm.StringParameter(this, 'AnthropicKeyParam', {
-      parameterName: '/deadlineai/anthropic/api-key',
-      stringValue: 'REPLACE_ME',
-      description: 'Anthropic Claude API key',
-      tier: ssm.ParameterTier.STANDARD,
-    });
-
-    new ssm.StringParameter(this, 'TwilioSidParam', {
-      parameterName: '/deadlineai/twilio/account-sid',
-      stringValue: 'REPLACE_ME',
-      description: 'Twilio Account SID',
-      tier: ssm.ParameterTier.STANDARD,
-    });
-
-    new ssm.StringParameter(this, 'TwilioTokenParam', {
-      parameterName: '/deadlineai/twilio/auth-token',
-      stringValue: 'REPLACE_ME',
-      description: 'Twilio Auth Token',
-      tier: ssm.ParameterTier.STANDARD,
-    });
-
-    new ssm.StringParameter(this, 'TwilioFromParam', {
-      parameterName: '/deadlineai/twilio/whatsapp-from',
-      stringValue: 'whatsapp:+14155238886',
-      description: 'Twilio WhatsApp sender number',
-      tier: ssm.ParameterTier.STANDARD,
     });
 
     // DynamoDB

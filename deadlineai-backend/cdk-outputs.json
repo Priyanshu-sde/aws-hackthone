@@ -1,0 +1,10 @@
+{
+  "DeadlineAiStack": {
+    "UserPoolClientId": "7osd2snumuo3kqit8ke0bcgpr0",
+    "TableName": "deadlineai",
+    "ApiUrl": "https://3bc2adz71l.execute-api.ap-south-1.amazonaws.com/prod/",
+    "UserPoolId": "ap-south-1_mjXWkUbJy",
+    "WebSocketUrl": "wss://ejargnnn59.execute-api.ap-south-1.amazonaws.com/prod",
+    "ApiGatewayRestApiEndpoint8A8A12DA": "https://3bc2adz71l.execute-api.ap-south-1.amazonaws.com/prod/"
+  }
+}
